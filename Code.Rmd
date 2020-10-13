@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 First load the necessary packages (these contain the functions we will use) and the data. (Don't laugh at the file path - I forgot R Studio automatically creates a file and by the time I remembered I couldn't correct it).
 
-```{r}
+```{r eval=FALSE}
 library(dslabs)
 library(tidyverse)
 library(dplyr)
