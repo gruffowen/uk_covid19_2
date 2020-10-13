@@ -11,33 +11,172 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Let's get started
 
-First load the necessary packages (these contain the functions we will use) and the data. (Don't laugh at the file path - I forgot R Studio automatically creates a file and by the time I remembered I couldn't correct it).
+First load the necessary packages (these contain the functions we will use) and the data. (Don't laugh at the file path - I forgot R Studio automatically creates a folder and by the time I remembered I couldn't correct it).
 
-```{r eval=FALSE}
+```{r}
 library(dslabs)
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
+library(zoo)
+library(ggthemes)
 
 cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-10/data_2020-Oct-09.csv")
 ```
 
-## R Markdown
+What's the sum of new cases over the past week and the sum of cases over the week before?
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+sum(cases[(1:7),5])
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-
+sum(cases[(8:14),5])
 ```
 
-## Including Plots
+That's all I was doing with the uk data, I just use their charts which is a cop out really.
 
-You can also embed plots, for example:
+# More importantly - Wales
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+I do hope you will be impressed with this section though. First we load the data from Public Health Wales. Then tell the computer to treat 'Specimen.date' as a date. 
+
+```{r}
+w_cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-10/Rapid COVID-19 surveillance data(1).csv", header=TRUE)
+w_cases$Specimen.date <- 
+  as.Date(w_cases$Specimen.date, format = "%d/%m/%Y")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Next pull out the data for Anglesey, Gwynedd and Conwy and put them in their own tables.
+
+```{r}
+a_cases <- filter(w_cases, Local.Authority == "Isle of Anglesey")
+a_cases
+
+g_cases <- filter(w_cases, Local.Authority == "Gwynedd")
+g_cases
+
+c_cases <- filter(w_cases, Local.Authority == "Conwy")
+c_cases
+```
+
+Next create a new dataframe where Conwy, Anglesey and Gwynedd each have their own columns, along with the testing episodes for each county.I just take the data from row 6 onwards, as turnaround times are 1-6 days (ish), so the data from the top rows is incomplete. Row 157 was the last row when I started doing it but the table gets longer each week (not near 65,000 rows yet though!) so this row number could be updated.
+
+```{r}
+newdf2 <- data.frame("Specimen date" = c_cases$Specimen.date[6:157],
+                    "Conwy" = c_cases$Cases..new.[6:157],
+                    "Anglesey" = a_cases$Cases..new.[6:157],
+                    "Gwynedd" = g_cases$Cases..new.[6:157],
+                    "Conwy_episodes" = c_cases$Testing.episodes..new.[6:157],
+                    "Anglesey_episodes" = a_cases$Testing.episodes..new.[6:157],
+                    "Gwynedd_episodes" = g_cases$Testing.episodes..new.[6:157])
+```
+
+Add columns to the new dataframe for the AGC total and the rolling averages
+
+```{r}
+newdf2 <- newdf2 %>% 
+  mutate("roll_mean_C" = rollmean(Conwy, 7, fill = NA))
+newdf2 <- newdf2 %>% 
+  mutate("roll_mean_G" = rollmean(Gwynedd, 7, fill = NA))
+newdf2 <- newdf2 %>% 
+  mutate("roll_mean_A" = rollmean(Anglesey, 7, fill = NA))
+newdf2 <- newdf2 %>% 
+  mutate("AGC" = (Conwy+Anglesey+Gwynedd))
+newdf2 <- newdf2 %>% 
+  mutate("roll_mean" = rollmean(AGC, 7, fill = NA))
+newdf2 <- newdf2 %>% 
+  mutate("AGC_episodes" = (Conwy_episodes +
+                             Anglesey_episodes+
+                             Gwynedd_episodes))
+newdf2 <- newdf2 %>% 
+  mutate("roll_mean_episodes" = rollmean(AGC_episodes, 7, fill = NA))
+newdf2 <- newdf2 %>% 
+  mutate("Per_Positivity" = ((AGC/AGC_episodes)*100))
+newdf2 <- newdf2 %>% 
+  mutate("roll_mean_positivity" = rollmean(Per_Positivity, 7, fill = NA))
+```
+
+Make a lovely plot for Conwy
+```{r}
+c_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Conwy))+
+  geom_bar(stat="identity", fill="steelblue", color = "steelblue",
+           width = 0.6)+
+  labs(x = "Specimen date",
+       y = "Conwy")+
+  geom_line(data = newdf2, aes(x=Specimen.date, y=roll_mean_C), 
+            color = "royalblue4",
+            size = 1)+
+  ggtitle("Conwy cases by specimen date")
+
+c_plot
+```
+Make a lovely plot for Gwynedd
+```{r}
+g_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Gwynedd))+
+  geom_bar(stat="identity", fill="steelblue", color = "steelblue",
+           width = 0.6)+
+  labs(x = "Specimen date",
+       y = "Gwynedd")+
+  geom_line(data = newdf2, aes(x=Specimen.date, y=roll_mean_G), 
+            color = "royalblue4",
+            size = 1)+
+  ggtitle("Gwynedd cases by specimen date")
+
+g_plot
+```
+Make a lovely plot for Anglesey
+```{r}
+a_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Anglesey))+
+  geom_bar(stat="identity", fill="steelblue", color = "steelblue",
+           width = 0.6)+
+  labs(x = "Specimen date",
+       y = "Anglesey")+
+  geom_line(data = newdf2, aes(x=Specimen.date, y=roll_mean_A), 
+            color = "royalblue4",
+            size = 1)+
+  ggtitle("Anglesey cases by specimen date")
+
+a_plot
+```
+Make a lovely plot for these 3 regions combined
+```{r}
+agc_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=AGC))+
+  geom_bar(stat="identity", fill="steelblue", color = "steelblue",
+           width = 0.6)+
+  labs(x = "Specimen date",
+       y = "Anglesey/Gwynedd/Conwy")+
+  geom_line(data = newdf2, aes(x=Specimen.date, y=roll_mean), 
+            color = "royalblue4",
+            size = 1)+
+  ggtitle("Local cases by specimen date")
+
+agc_plot
+```
+Make a lovely plot for AGC testing episodes
+```{r}
+agc_episodes_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=AGC_episodes))+
+  geom_bar(stat="identity", fill="steelblue", color = "steelblue",
+           width = 0.6)+
+  labs(x = "Episode date",
+       y = "Anglesey/Gwynedd/Conwy")+
+  geom_line(data = newdf2, aes(x=Specimen.date, y=roll_mean_episodes), 
+            color = "royalblue4",
+            size = 1)+
+  ggtitle("Testing episodes by date")
+
+agc_episodes_plot
+```
+Make a lovely plot for test positivity. I'm estimating positivity by doing ((AGC/AGC_episodes)*100) which isn't going to be totally right as it doesn't account for the same case being tested more than once but it's the best I can do.
+```{r}
+agc_positivity <- ggplot(data = newdf2, aes(x=Specimen.date, y= Per_Positivity))+
+  geom_bar(stat="identity", fill="steelblue", color = "steelblue",
+           width = 0.6)+
+  labs(x = "Episode date",
+       y = "Anglesey/Gwynedd/Conwy")+
+  geom_line(data = newdf2, aes(x=Specimen.date, y=roll_mean_positivity), 
+            color = "royalblue4",
+            size = 1)+
+  ggtitle("Test % Positivity by date")
+
+agc_positivity
+```
+
+THE END
