@@ -48,13 +48,10 @@ Next pull out the data for Anglesey, Gwynedd and Conwy and put them in their own
 
 ```{r}
 a_cases <- filter(w_cases, Local.Authority == "Isle of Anglesey")
-a_cases
 
 g_cases <- filter(w_cases, Local.Authority == "Gwynedd")
-g_cases
 
 c_cases <- filter(w_cases, Local.Authority == "Conwy")
-c_cases
 ```
 
 Next create a new dataframe where Conwy, Anglesey and Gwynedd each have their own columns, along with the testing episodes for each county.I just take the data from row 6 onwards, as turnaround times are 1-6 days (ish), so the data from the top rows is incomplete. Row 157 was the last row when I started doing it but the table gets longer each week (not near 65,000 rows yet though!) so this row number could be updated.
