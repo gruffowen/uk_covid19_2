@@ -67,7 +67,8 @@ their own columns, along with the testing episodes for each county.I
 just take the data from row 6 onwards, as turnaround times are 1-6 days
 (ish), so the data from the top rows is incomplete. Row 157 was the last
 row when I started doing it but the table gets longer each week (not
-near 65,000 rows yet though\!) so this row number could be updated.
+near 65,000 rows yet though\!) so this row number could (should) be
+updated.
 
 ``` r
 newdf2 <- data.frame("Specimen date" = c_cases$Specimen.date[6:157],
@@ -121,10 +122,9 @@ c_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Conwy))+
 c_plot
 ```
 
-    ## Warning: Removed 6 row(s) containing missing values (geom_path).
+![](Code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-![](Code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- --> Make a lovely
-plot for Gwynedd
+Make a lovely plot for Gwynedd
 
 ``` r
 g_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Gwynedd))+
@@ -140,10 +140,9 @@ g_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Gwynedd))+
 g_plot
 ```
 
-    ## Warning: Removed 6 row(s) containing missing values (geom_path).
+![](Code_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
-![](Code_files/figure-gfm/unnamed-chunk-8-1.png)<!-- --> Make a lovely
-plot for Anglesey
+Make a lovely plot for Anglesey
 
 ``` r
 a_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Anglesey))+
@@ -159,10 +158,9 @@ a_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Anglesey))+
 a_plot
 ```
 
-    ## Warning: Removed 6 row(s) containing missing values (geom_path).
+![](Code_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
-![](Code_files/figure-gfm/unnamed-chunk-9-1.png)<!-- --> Make a lovely
-plot for these 3 regions combined
+Make a lovely plot for these 3 regions combined
 
 ``` r
 agc_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=AGC))+
@@ -178,10 +176,9 @@ agc_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=AGC))+
 agc_plot
 ```
 
-    ## Warning: Removed 6 row(s) containing missing values (geom_path).
+![](Code_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
-![](Code_files/figure-gfm/unnamed-chunk-10-1.png)<!-- --> Make a lovely
-plot for AGC testing episodes
+Make a lovely plot for AGC testing episodes
 
 ``` r
 agc_episodes_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=AGC_episodes))+
@@ -197,13 +194,12 @@ agc_episodes_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=AGC_episodes))
 agc_episodes_plot
 ```
 
-    ## Warning: Removed 6 row(s) containing missing values (geom_path).
+![](Code_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
-![](Code_files/figure-gfm/unnamed-chunk-11-1.png)<!-- --> Make a lovely
-plot for test positivity. I’m estimating positivity by doing
-((AGC/AGC\_episodes)\*100) which isn’t going to be totally right as it
-doesn’t account for the same case being tested more than once but it’s
-the best I can do.
+Make a lovely plot for test positivity. I’m estimating positivity by
+doing ((AGC/AGC\_episodes)\*100) which isn’t going to be totally right
+as it doesn’t account for the same case being tested more than once but
+it’s the best I can do.
 
 ``` r
 agc_positivity <- ggplot(data = newdf2, aes(x=Specimen.date, y= Per_Positivity))+
@@ -218,8 +214,6 @@ agc_positivity <- ggplot(data = newdf2, aes(x=Specimen.date, y= Per_Positivity))
 
 agc_positivity
 ```
-
-    ## Warning: Removed 6 row(s) containing missing values (geom_path).
 
 ![](Code_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
