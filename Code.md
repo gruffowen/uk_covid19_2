@@ -18,23 +18,24 @@ library(ggplot2)
 library(zoo)
 library(ggthemes)
 
-cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-10/data_2020-Oct-09.csv")
+cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-17/data_2020-Oct-17.csv")
 ```
 
-What’s the sum of new cases over the past week and the sum of cases over
-the week before?
-
-``` r
-sum(cases[(1:7),5])
-```
-
-    ## [1] 108535
+What’s the sum of new cases over the last week for which we have the
+full data (left of the arrow in the presentation) and the sum of cases
+over the week before?
 
 ``` r
 sum(cases[(8:14),5])
 ```
 
-    ## [1] 43912
+    ## [1] 107149
+
+``` r
+sum(cases[(15:21),5])
+```
+
+    ## [1] 66846
 
 That’s all I was doing with the uk data, I just use their charts which
 is a cop out really.
@@ -46,7 +47,7 @@ the data from Public Health Wales. Then tell the computer to treat
 ‘Specimen.date’ as a date.
 
 ``` r
-w_cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-10/Rapid COVID-19 surveillance data(1).csv", header=TRUE)
+w_cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-17/Rapid COVID-19 surveillance data(1).csv", header=TRUE)
 w_cases$Specimen.date <- 
   as.Date(w_cases$Specimen.date, format = "%d/%m/%Y")
 ```
