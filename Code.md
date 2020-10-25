@@ -6,9 +6,7 @@ Helena
 # Let’s get started
 
 First load the necessary packages (these contain the functions we will
-use) and the data. (Don’t laugh at the file path - I forgot R Studio
-automatically creates a folder and by the time I remembered I couldn’t
-correct it).
+use) and the data.
 
 ``` r
 library(dslabs)
@@ -17,37 +15,15 @@ library(dplyr)
 library(ggplot2)
 library(zoo)
 library(ggthemes)
-
-cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-17/data_2020-Oct-17.csv")
 ```
 
-What’s the sum of new cases over the last week for which we have the
-full data (left of the arrow in the presentation) and the sum of cases
-over the week before?
+# Wales
+
+First we load the data from Public Health Wales. Then tell the computer
+to treat ‘Specimen.date’ as a date.
 
 ``` r
-sum(cases[(8:14),5])
-```
-
-    ## [1] 107149
-
-``` r
-sum(cases[(15:21),5])
-```
-
-    ## [1] 66846
-
-That’s all I was doing with the uk data, I just use their charts which
-is a cop out really.
-
-# More importantly - Wales
-
-I do hope you will be impressed with this section though. First we load
-the data from Public Health Wales. Then tell the computer to treat
-‘Specimen.date’ as a date.
-
-``` r
-w_cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-17/Rapid COVID-19 surveillance data(1).csv", header=TRUE)
+w_cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-24/Rapid COVID-19 surveillance data(1).csv", header=TRUE)
 w_cases$Specimen.date <- 
   as.Date(w_cases$Specimen.date, format = "%d/%m/%Y")
 ```
@@ -123,7 +99,7 @@ c_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Conwy))+
 c_plot
 ```
 
-![](Code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 Make a lovely plot for Gwynedd
 
@@ -141,7 +117,7 @@ g_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Gwynedd))+
 g_plot
 ```
 
-![](Code_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 Make a lovely plot for Anglesey
 
@@ -159,7 +135,7 @@ a_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=Anglesey))+
 a_plot
 ```
 
-![](Code_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 Make a lovely plot for these 3 regions combined
 
@@ -177,7 +153,7 @@ agc_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=AGC))+
 agc_plot
 ```
 
-![](Code_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 Make a lovely plot for AGC testing episodes
 
@@ -195,7 +171,7 @@ agc_episodes_plot <- ggplot(data = newdf2, aes(x=Specimen.date, y=AGC_episodes))
 agc_episodes_plot
 ```
 
-![](Code_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 Make a lovely plot for test positivity. I’m estimating positivity by
 doing ((AGC/AGC\_episodes)\*100) which isn’t going to be totally right
@@ -216,6 +192,6 @@ agc_positivity <- ggplot(data = newdf2, aes(x=Specimen.date, y= Per_Positivity))
 agc_positivity
 ```
 
-![](Code_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](Code_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 THE END

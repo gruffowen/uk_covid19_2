@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Let's get started
 
-First load the necessary packages (these contain the functions we will use) and the data. (Don't laugh at the file path - I forgot R Studio automatically creates a folder and by the time I remembered I couldn't correct it).
+First load the necessary packages (these contain the functions we will use) and the data. 
 
 ```{r message=FALSE}
 library(dslabs)
@@ -20,26 +20,15 @@ library(dplyr)
 library(ggplot2)
 library(zoo)
 library(ggthemes)
-
-cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-17/data_2020-Oct-17.csv")
 ```
 
-What's the sum of new cases over the last week for which we have the full data (left of the arrow in the presentation) and the sum of cases over the week before?
+
+# Wales
+
+First we load the data from Public Health Wales. Then tell the computer to treat 'Specimen.date' as a date. 
 
 ```{r}
-sum(cases[(8:14),5])
-
-sum(cases[(15:21),5])
-```
-
-That's all I was doing with the uk data, I just use their charts which is a cop out really.
-
-# More importantly - Wales
-
-I do hope you will be impressed with this section though. First we load the data from Public Health Wales. Then tell the computer to treat 'Specimen.date' as a date. 
-
-```{r}
-w_cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-17/Rapid COVID-19 surveillance data(1).csv", header=TRUE)
+w_cases <- read.csv("~/Desktop/uk_covid19_2/uk_covid19_2/2020-10-24/Rapid COVID-19 surveillance data(1).csv", header=TRUE)
 w_cases$Specimen.date <- 
   as.Date(w_cases$Specimen.date, format = "%d/%m/%Y")
 ```
